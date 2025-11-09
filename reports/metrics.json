@@ -1,13 +1,13 @@
 {
-  "threshold": 0.1,
-  "model": "xgboost",
+  "threshold": 0.36999999999999994,
+  "model": "xgboost_spw_1.00",
   "scale_pos_weight": 7.814769975786925,
-  "test_precision": 0.1138574150205555,
-  "test_recall": 1.0,
-  "test_accuracy": 0.11726514508315437,
-  "predicted_positives": 19946,
+  "test_precision": 0.4591439688715953,
+  "test_recall": 0.05195948921180097,
+  "test_accuracy": 0.885531638615592,
+  "predicted_positives": 257,
   "meets_constraints": false,
-  "target_precision": 0.75,
-  "target_accuracy": 0.7,
+  "target_precision": 0.8,
+  "target_accuracy": 0.8,
   "target_recall": 0.05
 }

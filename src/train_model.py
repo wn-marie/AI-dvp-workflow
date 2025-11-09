@@ -134,51 +134,78 @@ def choose_operating_point(
         selected["meets_constraints"] = True
         return selected
 
-    positive_recall_rows = [row for row in rows if row["recall"] > 0]
-    ranking_key = lambda row: (
-        row["recall"],
-        row["precision"],
-        row["accuracy"],
-        -abs(row["threshold"] - 0.5),
-    )
-    fallback_base = (
-        max(positive_recall_rows, key=ranking_key)
-        if positive_recall_rows
-        else max(rows, key=ranking_key)
-    )
+    viable_precision_rows = [
+        row for row in rows if row["precision"] > 0 and row["recall"] >= min_recall
+    ]
+
+    def precision_first_key(row: Dict[str, float]) -> Tuple[float, float, float]:
+        precision = row["precision"]
+        accuracy = row["accuracy"]
+        recall = row["recall"]
+        return (precision, accuracy, recall)
+
+    if viable_precision_rows:
+        fallback_base = max(viable_precision_rows, key=precision_first_key)
+    else:
+        def f1_like_score(row: Dict[str, float]) -> Tuple[float, float, float]:
+            precision = row["precision"]
+            recall = row["recall"]
+            if precision + recall == 0:
+                f1 = 0.0
+            else:
+                f1 = 2 * precision * recall / (precision + recall)
+            return (f1, precision, row["accuracy"])
+
+        fallback_base = max(rows, key=f1_like_score)
+
     fallback_copy = fallback_base.copy()
     fallback_copy["meets_constraints"] = False
     return fallback_copy
 
 
 def build_model_specs(class_ratio: float) -> List[Tuple[str, object]]:
-    xgb = XGBClassifier(
-        objective="binary:logistic",
-        eval_metric="logloss",
-        n_estimators=400,
-        max_depth=6,
-        learning_rate=0.05,
-        subsample=0.9,
-        colsample_bytree=0.9,
-        random_state=42,
-        scale_pos_weight=class_ratio,
-        reg_lambda=1.0,
-        min_child_weight=2,
+    candidate_weights = sorted(
+        {1.0, class_ratio, max(1.0, class_ratio * 0.75), max(1.0, class_ratio * 0.5)}
     )
 
-    log_reg = LogisticRegression(
+    models: List[Tuple[str, object]] = []
+    for weight in candidate_weights:
+        xgb = XGBClassifier(
+            objective="binary:logistic",
+            eval_metric="aucpr",
+            n_estimators=600,
+            max_depth=5,
+            learning_rate=0.05,
+            subsample=0.9,
+            colsample_bytree=0.9,
+            random_state=42,
+            scale_pos_weight=weight,
+            reg_lambda=1.0,
+            min_child_weight=2,
+        )
+        models.append((f"xgboost_spw_{weight:.2f}", xgb))
+
+    log_reg_balanced = LogisticRegression(
         solver="saga",
         penalty="l2",
-        max_iter=2000,
+        max_iter=3000,
         class_weight="balanced",
         n_jobs=-1,
         random_state=42,
     )
+    models.append(("logistic_regression_balanced", log_reg_balanced))
 
-    return [
-        ("xgboost", xgb),
-        ("logistic_regression", log_reg),
-    ]
+    log_reg = LogisticRegression(
+        solver="lbfgs",
+        penalty="l2",
+        max_iter=3000,
+        class_weight=None,
+        n_jobs=-1,
+        random_state=42,
+    )
+    models.append(("logistic_regression", log_reg))
+
+    return models
 
 
 def plot_confusion_matrix(y_true, y_scores, threshold: float, output_path: Path) -> None:
@@ -216,9 +243,9 @@ def main() -> None:
     neg_count = int(len(y_train) - pos_count)
     class_ratio = neg_count / pos_count if pos_count > 0 else 1.0
 
-    thresholds = np.linspace(0.05, 0.95, 19)
-    target_precision = 0.75
-    target_accuracy = 0.7
+    thresholds = np.linspace(0.05, 0.95, 91)
+    target_precision = 0.8
+    target_accuracy = 0.8
     target_recall = 0.05
 
     threshold_records: List[Dict[str, float]] = []

@@ -1,20 +1,56 @@
 [
   {
-    "model": "xgboost",
-    "threshold": 0.1,
-    "precision": 0.1138574150205555,
-    "recall": 1.0,
-    "accuracy": 0.11726514508315437,
-    "predicted_positives": 19946,
+    "model": "xgboost_spw_1.00",
+    "threshold": 0.36999999999999994,
+    "precision": 0.4591439688715953,
+    "recall": 0.05195948921180097,
+    "accuracy": 0.885531638615592,
+    "predicted_positives": 257,
+    "meets_constraints": false
+  },
+  {
+    "model": "xgboost_spw_3.91",
+    "threshold": 0.6599999999999999,
+    "precision": 0.42857142857142855,
+    "recall": 0.05019815059445178,
+    "accuracy": 0.8846826149927584,
+    "predicted_positives": 266,
+    "meets_constraints": false
+  },
+  {
+    "model": "xgboost_spw_5.86",
+    "threshold": 0.74,
+    "precision": 0.45849802371541504,
+    "recall": 0.05107881990312638,
+    "accuracy": 0.885531638615592,
+    "predicted_positives": 253,
+    "meets_constraints": false
+  },
+  {
+    "model": "xgboost_spw_7.81",
+    "threshold": 0.7799999999999999,
+    "precision": 0.41935483870967744,
+    "recall": 0.05151915455746367,
+    "accuracy": 0.884333017030415,
+    "predicted_positives": 279,
+    "meets_constraints": false
+  },
+  {
+    "model": "logistic_regression_balanced",
+    "threshold": 0.84,
+    "precision": 0.3920265780730897,
+    "recall": 0.05195948921180097,
+    "accuracy": 0.8833341657094341,
+    "predicted_positives": 301,
     "meets_constraints": false
   },
   {
     "model": "logistic_regression",
-    "threshold": 0.05,
-    "precision": 0.1136648139802714,
-    "recall": 0.9995596653456627,
-    "accuracy": 0.11591669579983019,
-    "predicted_positives": 19971,
+    "threshold": 0.37999999999999995,
+    "precision": 0.3933333333333333,
+    "recall": 0.05195948921180097,
+    "accuracy": 0.8833841082754832,
+    "predicted_positives": 300,
     "meets_constraints": false
   }
 ]
