@@ -2,6 +2,8 @@
 
 Helping clinical teams spot high-risk diabetic patients *before* they bounce back through the hospital doors. This project stitches together richer encounter data, sharper features, and an interactive Streamlit experience to deliver readmission insights in minutes.
 
+👉 **Live app:** https://readmission-risk-app.streamlit.app
+
 ---
 
 ### What We Shipped
