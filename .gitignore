@@ -1,0 +1,39 @@
+.env
+.env.*
+.venv/
+env/
+venv/
+ENV/
+
+# IDE and editor settings
+.idea/
+.vscode/
+
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.dylib
+build/
+dist/
+*.egg-info/
+
+# Logs and coverage
+*.log
+*.coverage
+.coverage.*
+
+# Streamlit local files
+.streamlit/secrets.toml
+.streamlit/config.toml
+.streamlit/state.json
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
